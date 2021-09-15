@@ -1,0 +1,12 @@
+body,
+#root,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  max-height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
