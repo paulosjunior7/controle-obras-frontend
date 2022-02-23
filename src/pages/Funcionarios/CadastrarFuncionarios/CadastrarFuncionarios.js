@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Paper, Grid, FormControl, Typography, } from '@material-ui/core';
-import useStyles from './CadastrarContatos.styles';
+import useStyles from './CadastrarFuncionarios.styles';
 import { useForm } from "react-hook-form";
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { GET_CONTATOS, CREATE_CONTATO, UPDATE_CONTATO } from '../../../services';
+import { CREATE_FUNCIONARIO, GET_FUNCIONARIOS, UPDATE_FUNCIONARIO } from '../../../services';
 import InputText from '../../../components/InputText';
 import { toast } from "react-toastify";
-
+import Select from '../../../components/Select'
 import { useMutation, useQuery } from '@apollo/client';
 
 import { useHistory, useParams } from 'react-router-dom';
 
-function CadastrarContatos() {
+function CadastrarFuncionarios() {
   const classes = useStyles();
   const history = useHistory();
   const params = useParams();
   const isEditing = Number(params.id) > 0;
-  const [tipoContato, setTipoContato] = useState('fisica');
-  const isFisica = tipoContato === 'fisica';
 
-  const { loading, error, data } = useQuery(GET_CONTATOS, {
+  const { loading, error, data } = useQuery(GET_FUNCIONARIOS, {
     variables: {
       filter: { companyId: 1, id: Number(params.id) },
     }
@@ -40,88 +35,79 @@ function CadastrarContatos() {
   useEffect(() => {
     if (isEditing) {
       reset({
-        descricao: data?.peoples?.findall?.items[0].description,
-        neighbourhood: data?.peoples?.findall?.items[0].neighbourhood,
-        fantasyName: data?.peoples?.findall?.items[0].fantasyName,
-        number: data?.peoples?.findall?.items[0].number,
-        state: data?.peoples?.findall?.items[0].state,
-        telephone: data?.peoples?.findall?.items[0].telephone,
-        zipCode: data?.peoples?.findall?.items[0].zipCode,
-        active: data?.peoples?.findall?.items[0].active,
-        address: data?.peoples?.findall?.items[0].address,
-        cellPhone: data?.peoples?.findall?.items[0].cellPhone,
-        city: data?.peoples?.findall?.items[0].city,
-        cnpj: data?.peoples?.findall?.items[0].cnpj,
-        cpf: data?.peoples?.findall?.items[0].cpf,
-        complement: data?.peoples?.findall?.items[0].complement,
-        corporateName: data?.peoples?.findall?.items[0].corporateName,
-        creationDate: data?.peoples?.findall?.items[0].creationDate,
-        eMail: data?.peoples?.findall?.items[0].eMail,
-        typePeople: data?.peoples?.findall?.items[0].typePeople,
+        name: data?.employees?.findall?.items[0].name,
+        cpf: data?.employees?.findall?.items[0].cpf,
+        address: data?.employees?.findall?.items[0].address,
+        cellPhone: data?.employees?.findall?.items[0].cellPhone,
+        city: data?.employees?.findall?.items[0].city,
+        complement: data?.employees?.findall?.items[0].complement,
+        eMail: data?.employees?.findall?.items[0].eMail,
+        neighbourhood: data?.employees?.findall?.items[0].neighbourhood,
+        number: data?.employees?.findall?.items[0].number,
+        state: data?.employees?.findall?.items[0].state,
+        telephone: data?.employees?.findall?.items[0].telephone,
+        zipCode: data?.employees?.findall?.items[0].zipCode,
       });
     }
-  }, [loading, params, isFisica]);
+  }, [loading, params]);
 
 
-  const [createContato] = useMutation(CREATE_CONTATO, {
+  const [createFuncionario] = useMutation(CREATE_FUNCIONARIO, {
     onCompleted: () => {
-      toast.success("Contato cadastrado com sucesso!");
-      history.push('/contatos');
+      toast.success("Colaborador cadastrado com sucesso!");
+      history.push('/funcionarios');
     },
     onError: (error) => {
       toast.warning(error.message);
     }
   })
 
-  const [updateContato] = useMutation(UPDATE_CONTATO, {
+  const [updateFuncionario] = useMutation(UPDATE_FUNCIONARIO, {
     onCompleted: () => {
-      toast.success("Contato alterado com sucesso!");
-      history.push('/contatos');
+      toast.success("Colaborador alterado com sucesso!");
+      history.push('/funcionarios');
     },
     onError: (error) => {
       toast.warning(error.message);
     }
   })
-
 
   const onSubmit = async (data) => {
     const newData = {
       variables: {
         id: Number(params.id),
-        people: {
+        employee: {
+          name: data.name,
+          cpf: data.cpf,
+          address: data.address,
+          cellPhone: data.cellPhone,
+          city: data.city,
+          complement: data.complement,
+          eMail: data.eMail,
           neighbourhood: data.neighbourhood,
           number: data.number,
           state: data.state,
           telephone: data.telephone,
           zipCode: data.zipCode,
-          address: data.address,
-          cellPhone: data.cellPhone,
-          city: data.city,
-          cnpj: data.cnpj ?? "",
-          cpf: data.cpf ?? "",
-          complement: data.complement,
-          corporateName: data.corporateName,
-          eMail: data.eMail,
-          fantasyName: data.fantasyName,
-          typePeople: tipoContato,
+          responsibilityId: 2,
           active: true
         }
       }
     };
 
 
-    isEditing ? await updateContato(newData) : await createContato(newData);
+    isEditing ? await updateFuncionario(newData) : await createFuncionario(newData);
   }
 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
-        <Link color="inherit" onClick={() => history.push('/contatos')}>
-          Contatos
+        <Link color="inherit" onClick={() => history.push('/funcionarios')}>
+          Colaboradores
         </Link>
-        <Link color="inherit" onClick={() => history.push('/contatos/cadastro')}>
-          Cadastrar Contatos
+        <Link color="inherit" onClick={() => history.push('/funcionarios/cadastro')}>
+          Cadastrar Colaboradores
         </Link>
       </Breadcrumbs>
 
@@ -134,7 +120,7 @@ function CadastrarContatos() {
             className={classes.title}
             weight="semibold"
           >
-            Cadastrar Contato
+            Cadastrar Colaborador
           </Typography>
           <Grid
             container
@@ -143,56 +129,30 @@ function CadastrarContatos() {
             xs={12}
             direction="row"
           >
-            <Grid item xs={12} md={12}>
-              <FormControl component="fieldset">
-                <RadioGroup row aria-label="position" name="position" defaultValue="fisica" onChange={(event) => setTipoContato(event.target.value)}>
-                  <FormControlLabel value="fisica" labelPlacement="end" checked={tipoContato === 'fisica'} control={<Radio />} label="Física" />
-                  <FormControlLabel value="juridica" labelPlacement="end" checked={tipoContato === 'juridica'} control={<Radio />} label="Jurídica" />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+
             <Grid item xs={6} md={4}>
               <InputText
                 control={control}
-                label={isFisica ? "Nome" : "Razão social"}
-                name="corporateName"
-                error={errors?.corporateName}
-                required={`${isFisica ? 'Nome' : 'Razão social'} é Obrigatório`}
+                label={"Nome"}
+                name="name"
+                error={errors?.name}
+                required="Nome é Obrigatório"
+                required="O Nome é obrigatório"
               />
             </Grid>
-            {!isFisica && (
-              <Grid item xs={4} md={4}>
-                <InputText
-                  control={control}
-                  label="Nome Fantasia"
-                  name="fantasyName"
-                  error={errors?.fantasyName}
-                  required={'Nome Fantasia é Obrigatório'}
-                />
-              </Grid>)}
-            <Grid item xs={12} md={2}>
-              {
-                isFisica ? (
-                  <InputText
-                    control={control}
-                    label="CPF"
-                    name="cpf"
-                    error={errors?.cpf}
-                    required="CPF é Obrigatório"
-                  />
-                ) :
-                  (
-                    <InputText
-                      control={control}
-                      label="CNPJ"
-                      name="cnpj"
-                      error={errors?.cnpj}
-                      required="CNPJ é Obrigatório"
-                    />
-                  )
-              }
+            <Grid item xs={6} md={4}>
+              <Select />
             </Grid>
             <Grid item xs={12} md={2}>
+              <InputText
+                control={control}
+                label="CPF"
+                name="cpf"
+                error={errors?.cpf}
+                required="CPF é Obrigatório"
+              />
+            </Grid>
+            <Grid item xs={2} md={2}>
               <InputText
                 control={control}
                 label="CEP"
@@ -209,6 +169,7 @@ function CadastrarContatos() {
             xs={12}
             direction="row"
           >
+
             <Grid item xs={8} md={6}>
               <InputText
                 control={control}
@@ -340,4 +301,4 @@ function CadastrarContatos() {
   )
 }
 
-export default CadastrarContatos;
+export default CadastrarFuncionarios;

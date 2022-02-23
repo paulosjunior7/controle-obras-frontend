@@ -11,11 +11,11 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import { AssignmentInd, Domain, Contacts, Assignment, Dashboard } from '@material-ui/icons';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Assignment from '@material-ui/icons/Assignment';
 import MailIcon from '@material-ui/icons/Mail';
 import Header from '../Header';
 import { useHistory } from 'react-router-dom';
@@ -84,11 +84,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MiniDrawer({children}) {
+export default function MiniDrawer({ children }) {
   const classes = useStyles();
   const history = useHistory();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -102,11 +102,41 @@ export default function MiniDrawer({children}) {
     history.push(`/${text}`);
   }
 
+  const findIcon = (name) => {
+    switch (name) {
+      case 'Empresas':
+        return <Domain />;
+      case 'Cargos':
+        return <AssignmentInd />;
+      case 'Contatos':
+        return <Contacts />;
+      case 'Despesas':
+        return <Contacts />;
+      case 'Fornecedores':
+        return <Assignment />;
+      case 'Funcionarios':
+        return <Assignment />;
+      case 'Terceirizados':
+        return <Assignment />;
+      case 'Usuarios':
+        return <Assignment />;
+      case 'Documentos':
+        return <Assignment />;
+      case 'Marcas':
+        return <Assignment />;
+      case 'Produtos':
+        return <Assignment />;
+      default:
+        return name;
+    }
+  }
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />
       <Header open={open} handleDrawerOpen={handleDrawerOpen} />
-      
+
       <Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
@@ -129,33 +159,33 @@ export default function MiniDrawer({children}) {
         <List>
           {['Obras'].map((text, index) => (
             <ListItem button key={text}>
-              <ListItemIcon onClick={() => handleRouter(text.toLocaleLowerCase())} >{index % 2 === 0 ? <Assignment /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} onClick={() => handleRouter(text.toLocaleLowerCase())}/>
+              <ListItemIcon onClick={() => handleRouter(text.toLocaleLowerCase())} >{index % 2 === 0 ? <Dashboard /> : <Dashboard />}</ListItemIcon>
+              <ListItemText primary={text} onClick={() => handleRouter(text.toLocaleLowerCase())} />
             </ListItem>
           ))}
         </List>
-          <Divider />
+        <Divider />
         <List>
           {[
             'Empresas',
-            'Cargos', 
+            'Cargos',
             'Contatos',
             'Despesas',
-            'Documentos',
             'Fornecedores',
             'Funcionarios',
-            'Marcas',
-            'Produtos', 
             'Terceirizados',
-            'Usuarios'
+            'Usuarios',
+            'Documentos',
+            'Marcas',
+            'Produtos',
           ].map((text, index) => (
             <ListItem button key={text}>
-              <ListItemIcon onClick={() => handleRouter(text.toLocaleLowerCase())}>{index % 2 === 0 ? <Assignment /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} onClick={() => handleRouter(text.toLocaleLowerCase())}/>
+              <ListItemIcon onClick={() => handleRouter(text.toLocaleLowerCase())}>{findIcon(text)}</ListItemIcon>
+              <ListItemText primary={text} onClick={() => handleRouter(text.toLocaleLowerCase())} />
             </ListItem>
           ))}
         </List>
-     
+
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />

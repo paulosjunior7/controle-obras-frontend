@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {
     minWidth: 750,
+    cursor: 'pointer',
   },
   visuallyHidden: {
     border: 0,
@@ -22,20 +23,10 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
-  paper: {
-    padding: 32
-
-  },
-  title: {
-    marginBottom: 12
-  },
-  breadcrumb: {
-    marginBottom: 12
-  },
-  botoes: {
-    width: '5%'
-  }
 }));
 
 export default useStyles;
+
+
+
 

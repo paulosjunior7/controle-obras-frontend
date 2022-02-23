@@ -1,11 +1,11 @@
 
 import React from 'react';
-// import { useAuth } from '../contexts/auth';
+import useStore from '../hooks/useStore';
 import AppRoutes from './app.routes';
 import AuthRoutes from './auth.routes';
 
 const Routes = ({ children }) => {
-    //    const { signed, loading } = useAuth();
+    const { signed, loading } = useStore();
 
     if (false) {
         return (
@@ -25,7 +25,7 @@ const Routes = ({ children }) => {
         );
     }
 
-    return false ? <AuthRoutes /> : <AppRoutes children={children} />;
+    return true ? <AppRoutes children={children} /> : <AuthRoutes />;
 }
 
 export default Routes;

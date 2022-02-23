@@ -11,7 +11,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'https://performancebuilder.azurewebsites.net/graphql',
+  uri: 'https://localhost:5001/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -19,7 +19,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      Authorization: token ? `Bearer ${token}` : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzMjliNGI5OTZhZDg0ODYyOWZmZDYxODFmYTVjMTZmNCIsInN1YiI6IlBBVUxPIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJlZTQ2OWE2NS02NDNlLTRhNjYtOTBjMi1mN2RmMDk1ODk0NmIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTYzMTg5MjE3NSwiaXNzIjoiWW91cklzc3Vlck5hbWUiLCJhdWQiOiJodHRwczovL3BlcmZvcm1hbmNlYnVpbGRlci5henVyZXdlYnNpdGVzLm5ldCJ9.aXj2HVQxrZ_8UF9PG48Tn1xgT_bEaqfmE0HWYa90ewQ",
+      Authorization: token ? `Bearer ${token}` : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlOWYwODc5NDA5MWY0YjY5YjRjNTJlZTE5NWJmZjc2MCIsInN1YiI6IlBBVUxPIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJiMGFiYjM1MC0yODE4LTRjNzUtOWYwYy04YWJiZGM0NGZmNzIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTY0MjEyMjI3MiwiaXNzIjoiWW91cklzc3Vlck5hbWUiLCJhdWQiOiJodHRwczovL3BlcmZvcm1hbmNlYnVpbGRlci5henVyZXdlYnNpdGVzLm5ldCJ9.ZDq01xQxLE2OefzahOXcqUwyt1Jf97TX9NmemDiyjyM"
     }
   }
 });

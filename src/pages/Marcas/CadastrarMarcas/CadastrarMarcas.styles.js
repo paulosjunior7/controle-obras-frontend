@@ -1,4 +1,4 @@
-import {  makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
     padding: 32
 
   },
-  title : {
+  title: {
     marginBottom: 12
   },
-  breadcrumb : {
+  breadcrumb: {
     marginBottom: 12
   }
 }));

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   CircularProgress
 } from '@material-ui/core';
@@ -11,5 +11,5 @@ const Loader = () => {
   )
 }
 
-export default Loader;
+export default memo(Loader);
 

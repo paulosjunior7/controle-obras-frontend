@@ -16,9 +16,13 @@ import Terceirizados from '../pages/Terceirizados';
 import Usuarios from '../pages/Usuarios';
 import CadastrarMarcas from '../pages/Marcas/CadastrarMarcas';
 import CadastrarFornecedores from '../pages/Fornecedores/CadastrarFornecedores/CadastrarFornecedores';
+import CadastrarFuncionarios from '../pages/Funcionarios/CadastrarFuncionarios';
+import CadastrarDocumentacao from '../pages/Documentos/CadastrarDocumento/CadastrarDocumento';
 import CadastrarContatos from '../pages/Contatos/CadastrarContatos';
 import CadastrarCargos from '../pages/Cargos/CadastrarCargos';
-import SignIn from '../pages/SignIn';
+import CadastrarDespesas from '../pages/Despesas/CadastrarDespesas';
+import Login from '../pages/Login';
+import CadastrarEmpresa from '../pages/Empresas/CadastrarEmpresa/CadastrarEmpresa';
 
 const AppRoutes = ({ children }) => {
 
@@ -33,35 +37,35 @@ const AppRoutes = ({ children }) => {
 
           <Route exact path="/cargos" component={Cargos} />
           <Route exact path="/cargos/cadastro" component={CadastrarCargos} />
-          <Route exact path="/cargos/editar/:id" component={Cargos} />
+          <Route exact path="/cargos/editar/:id" component={CadastrarCargos} />
 
           <Route exact path="/contatos" component={Contatos} />
           <Route exact path="/contatos/cadastro" component={CadastrarContatos} />
-          <Route exact path="/contatos/editar/:id" component={Contatos} />
+          <Route exact path="/contatos/editar/:id" component={CadastrarContatos} />
 
           <Route exact path="/despesas" component={Despesas} />
-          <Route exact path="/despesas/cadastro" component={Despesas} />
-          <Route exact path="/despesas/editar/:id" component={Despesas} />
+          <Route exact path="/despesas/cadastro" component={CadastrarDespesas} />
+          <Route exact path="/despesas/editar/:id" component={CadastrarDespesas} />
 
           <Route exact path="/documentos" component={Documentos} />
-          <Route exact path="/documentos/cadastro" component={Documentos} />
-          <Route exact path="/documentos/editar/:id" component={Documentos} />
+          <Route exact path="/documentos/cadastro" component={CadastrarDocumentacao} />
+          <Route exact path="/documentos/editar/:id" component={CadastrarDocumentacao} />
 
           <Route exact path="/empresas" component={Empresas} />
-          <Route exact path="/empresas/cadastro" component={Empresas} />
-          <Route exact path="/empresas/editar/:id" component={Empresas} />
+          <Route exact path="/empresas/cadastro" component={CadastrarEmpresa} />
+          <Route exact path="/empresas/editar/:id" component={CadastrarEmpresa} />
 
           <Route exact path="/fornecedores" component={Fornecedores} />
           <Route exact path="/fornecedores/cadastro" component={CadastrarFornecedores} />
           <Route exact path="/fornecedores/editar/:id" component={Fornecedores} />
 
           <Route exact path="/funcionarios" component={Funcionarios} />
-          <Route exact path="/funcionarios/cadastro" component={Funcionarios} />
+          <Route exact path="/funcionarios/cadastro" component={CadastrarFuncionarios} />
           <Route exact path="/funcionarios/editar/:id" component={Funcionarios} />
 
           <Route exact path="/marcas" component={Marcas} />
           <Route exact path="/marcas/cadastro" component={CadastrarMarcas} />
-          <Route exact path="/marcas/editar/:id" component={Marcas} />
+          <Route exact path="/marcas/editar/:id" component={CadastrarMarcas} />
 
           <Route exact path="/obras" component={Obras} />
           <Route exact path="/obras/cadastro" component={Obras} />

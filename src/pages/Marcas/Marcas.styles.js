@@ -1,4 +1,4 @@
-import {  makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  botoes: {
+    width: '5%'
+  }
 }));
 
 export default useStyles;

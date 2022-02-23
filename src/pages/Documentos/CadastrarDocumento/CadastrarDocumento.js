@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Paper, Grid, Breadcrumbs, Typography, Link } from '@material-ui/core';
-import useStyles from './CadastrarProduto.styles';
+import { Button, Paper, Grid, Breadcrumbs, Link, Typography } from '@material-ui/core';
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { useHistory, useParams } from 'react-router-dom';
-import { CREATE_PRODUCT, UPDATE_PRODUCT, GET_PRODUCTS } from '../../../services';
+import { CREATE_DOCUMENTACAO, UPDATE_DOCUMENT, GET_DOCUMENTOS } from '../../../services';
 import { useMutation, useQuery } from '@apollo/client';
 import { toast } from "react-toastify";
 import InputText from '../../../components/InputText';
+import useStyles from './CadastrarDocumento.styles';
 
-const CadastrarProduto = () => {
+const CadastrarDocumentacao = () => {
   const classes = useStyles();
   const history = useHistory();
   const params = useParams();
   const isEditing = Number(params.id) > 0;
 
-  const { loading, error, data } = useQuery(GET_PRODUCTS, {
+  const { loading, error, data } = useQuery(GET_DOCUMENTOS, {
     variables: {
       filter: { companyId: 1, id: Number(params.id) },
     }
@@ -30,28 +30,25 @@ const CadastrarProduto = () => {
   useEffect(() => {
     if (isEditing) {
       reset({
-        descricao: data?.products?.findall?.items[0].description,
-        detalhe: data?.products?.findall?.items[0].detail
+        descricao: data?.documentations?.findall?.items[0].description,
       });
     }
   }, [loading, params])
 
-  console.log('data', data)
-
-  const [createProdutos] = useMutation(CREATE_PRODUCT, {
+  const [createDocumentacao] = useMutation(CREATE_DOCUMENTACAO, {
     onCompleted: () => {
-      toast.success("Produto cadastrado com sucesso!");
-      history.push('/produtos');
+      toast.success("Documento cadastrado com sucesso!");
+      history.push('/documentos');
     },
     onError: (error) => {
       toast.warning(error.message);
     }
   })
 
-  const [updateProdutos] = useMutation(UPDATE_PRODUCT, {
+  const [updateDocumentacao] = useMutation(UPDATE_DOCUMENT, {
     onCompleted: () => {
-      toast.success("Produto alterado com sucesso!");
-      history.push('/produtos');
+      toast.success("Documento alterado com sucesso!");
+      history.push('/documentos');
     },
     onError: (error) => {
       toast.warning(error.message);
@@ -62,25 +59,24 @@ const CadastrarProduto = () => {
     const newData = {
       variables: {
         id: Number(params.id),
-        product: {
+        documentation: {
           description: data.descricao,
-          detail: data.detalhe,
           active: true
         }
       }
     };
 
-    isEditing ? await updateProdutos(newData) : await createProdutos(newData);
+    isEditing ? await updateDocumentacao(newData) : await createDocumentacao(newData);
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
-        <Link color="inherit" onClick={() => history.push('/produtos')}>
-          Produtos
+        <Link color="inherit" onClick={() => history.push('/documentos')}>
+          Documentos
         </Link>
-        <Link color="inherit" onClick={() => history.push('/produtos/cadastro')}>
-          Cadastrar Produtos
+        <Link color="inherit" onClick={() => history.push('/documentos/cadastro')}>
+          Cadastrar Documentos
         </Link>
       </Breadcrumbs>
       <Paper className={classes.paper}>
@@ -92,7 +88,7 @@ const CadastrarProduto = () => {
             className={classes.title}
             weight="semibold"
           >
-            {isEditing ? 'Editar Produto' : 'Cadastrar Produto'}
+            {isEditing ? 'Editar Documento' : 'Cadastrar Documento'}
           </Typography>
           <Grid
             container
@@ -102,22 +98,13 @@ const CadastrarProduto = () => {
             direction="row"
             className={classes.borderBottom}
           >
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <InputText
                 control={control}
                 label="Descrição"
                 name="descricao"
                 error={errors?.descricao}
                 required="Descrição é Obrigatória"
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <InputText
-                control={control}
-                label="Detalhe"
-                name="detalhe"
-                error={errors?.detalhe}
-                required="Detalhe é Obrigatória"
               />
             </Grid>
           </Grid>
@@ -134,7 +121,7 @@ const CadastrarProduto = () => {
               <Button
                 data-testid="btn-cancelar-edicao"
                 variant="subtle"
-                onClick={() => history.push('/produtos')}
+                onClick={() => history.push('/documentos')}
               >
                 Cancelar
               </Button>
@@ -155,4 +142,4 @@ const CadastrarProduto = () => {
   )
 }
 
-export default CadastrarProduto;
+export default CadastrarDocumentacao;

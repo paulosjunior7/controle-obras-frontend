@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  botoes: {
+    width: '5%'
+  }
 }));
 
 export default useStyles;

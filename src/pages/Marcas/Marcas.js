@@ -1,150 +1,185 @@
-import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-
-
-import useStyles from './Marcas.styles';
-import { Button, Grid } from '@material-ui/core';
+import React, { useState } from 'react';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TablePagination,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Button,
+  Grid,
+  Tooltip,
+  IconButton,
+  Typography,
+} from '@material-ui/core';
+import Loader from '../../components/Loader';
+import Dialog from '../../components/Dialog';
+import Edit from '@material-ui/icons/Edit';
+import Delete from '@material-ui/icons/Delete';
 import { useHistory } from 'react-router-dom';
-
-function createData(descricao, detalhe) {
-  return { descricao, detalhe };
-}
-
-const rows = [
-  createData('Tijolo Furado', '19 x 20 x 46'),
-  createData('Areia', 'Grossa'),
-  createData('Porta', 'Grossa'),
-];
-
-const headCells = [
-  { id: 'descricao', numeric: false, disablePadding: true, label: 'Descrição' },
-  { id: 'detalhe', numeric: false, disablePadding: false, label: 'Detalhe' },
-];
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_MARCAS, UPDATE_MARCA } from '../../services';
+import { toast } from "react-toastify";
+import useStyles from './Marcas.styles';
 
 const Marcas = () => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('descricao');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const history = useHistory();
+  const [open, setOpen] = React.useState(false);
+  const [item, setItem] = React.useState({});
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+  const { loading, refetch, data } = useQuery(GET_MARCAS, {
+    variables: {
+      filter: { companyId: 1, active: true },
+      pagination: {
+        pageNumber: page + 1,
+        pageSize: rowsPerPage
+      }
     }
-    setSelected([]);
-  };
+  });
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
+  const [updateMarcas] = useMutation(UPDATE_MARCA, {
+    onCompleted: () => {
+      toast.success("Marca inativada com sucesso!");
+      refetch();
+      setItem({});
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+      setItem({});
+      refetch();
+      setOpen(false);
     }
-
-    setSelected(newSelected);
-  };
+  })
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
+  const handleInative = () => {
+    const newData = {
+      variables: {
+        id: Number(item.id),
+        brand: {
+          description: item.description,
+          active: false
+        }
+      }
+    };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
-  const handleDelete = () => {
-    console.log('deletar', selected);
+    if (item.id > 0) {
+      updateMarcas(newData)
+    }
   }
 
-  const handleEdit = () => {
-    console.log('editar', selected);
+  if (loading) {
+    return <Loader />
   }
 
   return (
     <Grid container spacing={3}>
-      <Grid container item xs={12} justify="flex-end">
+      <Dialog
+        open={open}
+        setOpen={setOpen}
+        dialogText="Confirma a inativação?"
+        description={item.description}
+        handleInative={handleInative} />
+      <Grid container item xs={12} justify="space-between">
+        <Typography
+          variant="h6"
+          size={14}
+          color="neutralPrimary"
+          className={classes.title}
+          weight="semibold"
+        >
+          Marcas
+        </Typography>
         <Button
           variant="contained"
           color="primary"
           className={classes.button}
           onClick={() => history.push('/marcas/cadastro')}
         >
-          Adicionar Marca
+          Adicionar Marcas
         </Button>
       </Grid>
-      <Paper className={classes.paper}>
+      <TableContainer component={Paper}>
 
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Tabela reduzida"
-      />
+        <Table className={classes.table} size="small" className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Descrição</TableCell>
+              <TableCell align="right" />
+              <TableCell align="right" />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.brands.findall.items.map((item) => (
+              <TableRow key={item.description} hover>
+                <TableCell component="th" scope="row">
+                  {item.description}
+                </TableCell>
+                <TableCell align="right" className={classes.botoes}>
+                  <Tooltip
+                    placement="top"
+                    title="Excluir"
+                    color="white"
+                  >
+                    <IconButton
+                      variant="subtle"
+                      onClick={() => {
+                        setOpen(true);
+                        setItem(item);
+                      }
+                      }
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+                <TableCell align="right" className={classes.botoes}>
+                  <Tooltip
+                    placement="top"
+                    title="editar"
+                    color="white"
+                  >
+                    <IconButton
+                      variant="subtle"
+                      onClick={() =>
+                        history.push(`/marcas/editar/${item.id}`)
+                      }
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          labelRowsPerPage="Linhas por Página"
+          count={data?.brands.findall.totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          hideNextButton={!data?.brands?.findall.pageInfo.hasNextPage}
+          hidePrevButton={!data?.brands?.findall.pageInfo.hasPreviousPage}
+        />
+      </TableContainer>
     </Grid>
 
   );

@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useForm } from "react-hook-form";
+
+import InputText from '../../components/InputText';
+import useStore from '../../hooks/useStore';
 
 function Copyright() {
   return (
@@ -28,10 +32,11 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(18),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center'
   },
   avatar: {
     margin: theme.spacing(1),
@@ -46,8 +51,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+const Login = () => {
+  const { Logar } = useStore();
   const classes = useStyles();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm();
+
+  function onSubmit(data) {
+    console.log('data', data)
+    Logar(data);
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,29 +78,31 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
+        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={12}>
+              <InputText
+                control={control}
+                label="Email"
+                name="email"
+                error={errors?.email}
+                required="O E-mail é Obrigatório"
+                autoComplete="email"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <InputText
+                control={control}
+                label="Senha"
+                name="password"
+                error={errors?.password}
+                required="A Senha é Obrigatório"
+                type="password"
+                id="password"
+              />
+            </Grid>
+          </Grid>
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Lembrar-me"
@@ -115,3 +136,5 @@ export default function SignIn() {
     </Container>
   );
 }
+
+export default Login;

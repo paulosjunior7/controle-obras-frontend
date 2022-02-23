@@ -1,19 +1,78 @@
-import React from 'react';
-import { Button, Paper, Grid, TextField, Typography, Breadcrumbs, Link } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { Button, Paper, Grid, Breadcrumbs, Typography, Link } from '@material-ui/core';
+import { useForm, Controller, FormProvider } from "react-hook-form";
+import { useHistory, useParams } from 'react-router-dom';
+import { CREATE_DESPESA, UPDATE_DESPESA, GET_MARCAS, CREATE_MARCA, UPDATE_MARCA } from '../../../services';
+import { useMutation, useQuery } from '@apollo/client';
+import { toast } from "react-toastify";
+import InputText from '../../../components/InputText';
 import useStyles from './CadastrarMarcas.styles';
-import { useForm } from "react-hook-form";
-import { useHistory } from 'react-router-dom';
 
-function CadastrarMarcas() {
+const CadastrarMarca = () => {
   const classes = useStyles();
   const history = useHistory();
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const params = useParams();
+  const isEditing = Number(params.id) > 0;
+
+  const { loading, error, data } = useQuery(GET_MARCAS, {
+    variables: {
+      filter: { companyId: 1, id: Number(params.id) },
+    }
+  });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm();
+
+  useEffect(() => {
+    if (isEditing) {
+      reset({
+        descricao: data?.brands?.findall?.items[0].description,
+      });
+    }
+  }, [loading, params])
+
+  const [createMarca] = useMutation(CREATE_MARCA, {
+    onCompleted: () => {
+      toast.success("Marca cadastrada com sucesso!");
+      history.push('/marcas');
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+    }
+  })
+
+  const [updateMarca] = useMutation(UPDATE_MARCA, {
+    onCompleted: () => {
+      toast.success("Marca alterada com sucesso!");
+      history.push('/marcas');
+    },
+    onError: (error) => {
+      toast.warning(error.message);
+    }
+  })
+
+  const onSubmit = async (data) => {
+    const newData = {
+      variables: {
+        id: Number(params.id),
+        brand: {
+          description: data.descricao,
+          active: true
+        }
+      }
+    };
+
+    isEditing ? await updateMarca(newData) : await createMarca(newData);
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
-        <Link color="inherit" href="/" onClick={() => history.push('/marcas')}>
+        <Link color="inherit" onClick={() => history.push('/marcas')}>
           Marcas
         </Link>
         <Link color="inherit" onClick={() => history.push('/marcas/cadastro')}>
@@ -24,12 +83,12 @@ function CadastrarMarcas() {
         <Grid container spacing={3}>
           <Typography
             variant="h5"
-            size={18}
+            size={17}
             color="neutralPrimary"
             className={classes.title}
             weight="semibold"
           >
-            Cadastrar Marca
+            {isEditing ? 'Editar Marca' : 'Cadastrar Marca'}
           </Typography>
           <Grid
             container
@@ -40,15 +99,12 @@ function CadastrarMarcas() {
             className={classes.borderBottom}
           >
             <Grid item xs={12} md={12}>
-              <TextField
+              <InputText
+                control={control}
                 label="Descrição"
                 name="descricao"
-                variant="outlined"
-                size="small"
-                fullWidth
-                {...register("descricao", { required: "Descrição é obrigatório" })}
-                error={errors.descricao}
-                helperText={errors?.descricao?.message}
+                error={errors?.descricao}
+                required="Descrição é Obrigatória"
               />
             </Grid>
           </Grid>
@@ -65,7 +121,7 @@ function CadastrarMarcas() {
               <Button
                 data-testid="btn-cancelar-edicao"
                 variant="subtle"
-                onClick={() => history.push('/produtos')}
+                onClick={() => history.push('/marcas')}
               >
                 Cancelar
               </Button>
@@ -86,4 +142,4 @@ function CadastrarMarcas() {
   )
 }
 
-export default CadastrarMarcas;
+export default CadastrarMarca;
